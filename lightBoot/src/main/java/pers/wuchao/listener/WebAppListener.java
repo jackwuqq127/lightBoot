@@ -12,7 +12,6 @@ import javax.servlet.annotation.WebListener;
 import pers.wuchao.action.annotation.Action;
 import pers.wuchao.action.annotation.ActionlMapping;
 import pers.wuchao.action.framework.ConfigureProperties;
-
 @WebListener
 public class WebAppListener implements ServletContextListener {
 
@@ -25,6 +24,7 @@ public class WebAppListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent app) {
+		System.out.println("demo");
 		appPro=ConfigureProperties.properties;
 		String scanPackageConfig=appPro.getProperty("scanBasePackage");
 		
@@ -113,6 +113,5 @@ public class WebAppListener implements ServletContextListener {
 		array[1]=obj;
 		ConfigureProperties.servletMap.put(c_url+m_url,array);
 	}
-	
 	
 }
