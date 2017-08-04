@@ -20,7 +20,7 @@ public class MainTest {
 	public void scanPath(String path,String urlPath){
 		File f=new File(path);
 		if(f.isFile()&&f.getPath().indexOf("$")==-1){
-			String classNmae=f.getPath().substring(urlPath.length()+1,f.getPath().length()-6).replace("\\",".");
+			String classNmae=f.getPath().substring(urlPath.length()+1,f.getPath().length()-6);
 			System.out.println(classNmae);
 		}else{
 			File[] listFile=f.listFiles();

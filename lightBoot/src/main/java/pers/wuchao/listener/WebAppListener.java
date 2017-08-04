@@ -9,22 +9,21 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.apache.log4j.Logger;
+
 import pers.wuchao.action.annotation.Action;
 import pers.wuchao.action.annotation.ActionlMapping;
 import pers.wuchao.action.framework.ConfigureProperties;
 @WebListener
 public class WebAppListener implements ServletContextListener {
-
+	private Logger log=Logger.getLogger(WebAppListener.class);
 	private Properties appPro=null;
 	
 	@Override
-	public void contextDestroyed(ServletContextEvent arg0) {
-		
-	}
+	public void contextDestroyed(ServletContextEvent arg0) {}
 
 	@Override
 	public void contextInitialized(ServletContextEvent app) {
-		System.out.println("demo");
 		appPro=ConfigureProperties.properties;
 		String scanPackageConfig=appPro.getProperty("scanBasePackage");
 		
@@ -34,7 +33,7 @@ public class WebAppListener implements ServletContextListener {
 			try {
 				throw new Exception("基础扫描包=>"+scanPackageConfig+"不存在，请检查：scanBasePackage 属性");
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e, e.fillInStackTrace());
 			}
 			return;
 		};
@@ -44,6 +43,12 @@ public class WebAppListener implements ServletContextListener {
 			String basepath=getBasePath(f);
 			scanPath(url.getPath(),basepath);
 		}
+		
+		/*StringBuffer sb=new StringBuffer("已经扫描到的url: \n");
+		for(String key:ConfigureProperties.servletMap.keySet()){
+			sb.append(key+"\n");
+		}
+		log.info(sb);*/
 	}
 	
 	//得到基础路径
@@ -67,7 +72,6 @@ public class WebAppListener implements ServletContextListener {
 					if(file.getName().endsWith("annotation")||file.getName().endsWith("framework")){
 						continue;
 					}
-					System.out.println(file.getName());
 					scanPath(file.getPath(),urlPath);
 				}
 			}
@@ -103,7 +107,7 @@ public class WebAppListener implements ServletContextListener {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e,e.fillInStackTrace());
 		} 
 	}
 	

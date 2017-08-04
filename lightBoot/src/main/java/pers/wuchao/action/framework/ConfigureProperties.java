@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class ConfigureProperties {
+	private static Logger log=Logger.getLogger(ConfigureProperties.class);
 	public static Map<String, Object[]> servletMap=null;
 	public static Properties properties=null;
 	
@@ -17,7 +20,7 @@ public class ConfigureProperties {
 		try {
 			properties.load(in);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e,e.fillInStackTrace());
 		}
 	}
 }

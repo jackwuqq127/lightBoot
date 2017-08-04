@@ -71,12 +71,9 @@ public class ServerFilter implements Filter {
 		if(encode==null){
 			encode="utf-8";
 		}
-		//System.out.println("encode==>"+encode);
 		req.setCharacterEncoding(encode);
 		resp.setCharacterEncoding(encode);
 	}
 	
-	public void destroy() {
-		System.out.println("destroy");
-	}
+	public void destroy() {}
 }

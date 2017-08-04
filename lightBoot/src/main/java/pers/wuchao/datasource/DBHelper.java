@@ -10,13 +10,15 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.log4j.Logger;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 
 
+
 public class DBHelper {
+	private static Logger log=Logger.getLogger(DBHelper.class);
 	private static Properties info=new Properties();
-	
 	
 	protected Connection con=null;
 	protected PreparedStatement ps=null;
@@ -32,7 +34,7 @@ public class DBHelper {
 			dataSource=DruidDataSourceFactory.createDataSource(info);
 			queryRunner=new QueryRunner(dataSource);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e,e.fillInStackTrace());
 		}
 	}
 	
@@ -40,7 +42,7 @@ public class DBHelper {
 		try {
 			return dataSource.getConnection();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e,e.fillInStackTrace());
 		}
 		return null;
 	}
@@ -57,7 +59,7 @@ public class DBHelper {
 				con.close();con=null;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e,e.fillInStackTrace());
 		}
 	}
 }

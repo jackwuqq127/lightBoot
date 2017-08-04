@@ -6,11 +6,13 @@ import java.util.Map;
 
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.log4j.Logger;
 
 import pers.wuchao.datasource.DBHelper;
 
 public class DaoTool extends DBHelper {
-
+	private Logger log=Logger.getLogger(DaoTool.class);
+	
 	//返回行
 	public Map<String, Object> queryForMap(String sql,Object...params){
 		return map(sql, params);
@@ -27,7 +29,7 @@ public class DaoTool extends DBHelper {
 		try {
 			list = queryRunner.query(sql, new MapListHandler(), params);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e,e.fillInStackTrace());
 		}
 		return list;
 	}
@@ -36,7 +38,7 @@ public class DaoTool extends DBHelper {
 		try {
 			return queryRunner.query(sql, new MapHandler(), params);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e,e.fillInStackTrace());
 		}
 		return null;
 	}
