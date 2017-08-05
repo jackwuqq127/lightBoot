@@ -2,6 +2,7 @@ package pers.wuchao.listener;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 
@@ -14,8 +15,10 @@ import org.apache.log4j.Logger;
 import pers.wuchao.action.annotation.Action;
 import pers.wuchao.action.annotation.ActionlMapping;
 import pers.wuchao.action.framework.ConfigureProperties;
+
 @WebListener
 public class WebAppListener implements ServletContextListener {
+	
 	private Logger log=Logger.getLogger(WebAppListener.class);
 	private Properties appPro=null;
 	
@@ -25,23 +28,30 @@ public class WebAppListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent app) {
 		appPro=ConfigureProperties.properties;
-		String scanPackageConfig=appPro.getProperty("scanBasePackage");
+		String scanPackageConfig=appPro.getProperty("basePackage");
 		
 		String baseStr="/"+scanPackageConfig.replaceAll("\\.","/");
 		URL url=this.getClass().getResource(baseStr);
 		if(url==null){
 			try {
-				throw new Exception("基础扫描包=>"+scanPackageConfig+"不存在，请检查：scanBasePackage 属性");
+				throw new Exception("基础扫描包=>"+scanPackageConfig+"不存在，请检查：basePackage 属性");
 			} catch (Exception e) {
 				log.error(e, e.fillInStackTrace());
 			}
 			return;
 		};
-		File f=new File(url.getPath());
-		
+		File f=null;
+		try {
+			f = new File(url.toURI());
+		} catch (URISyntaxException e) {
+			
+			log.error(e, e.fillInStackTrace());
+			return;
+		}
+				
 		if(url.getProtocol().equals("file")){
-			String basepath=getBasePath(f);
-			scanPath(url.getPath(),basepath);
+			File baseFile=getBasePath(f);
+			scanPath(f,baseFile);
 		}
 		
 		/*StringBuffer sb=new StringBuffer("已经扫描到的url: \n");
@@ -52,16 +62,16 @@ public class WebAppListener implements ServletContextListener {
 	}
 	
 	//得到基础路径
-	private String getBasePath(File file){
+	private File getBasePath(File file){
 		if(file.getPath().endsWith("classes")){
-			return file.getPath();
+			return file;
 		}
 		return getBasePath(file.getParentFile());
 	}
 	
 	//扫描路径，配置访问
-	private void scanPath(String path,String urlPath){
-		File f=new File(path);
+	private void scanPath(File f,File bFile){
+		String urlPath=bFile.getPath();
 		if(f.isFile()&&f.getPath().indexOf("$")==-1){
 			String className=f.getPath().substring(urlPath.length()+1,f.getPath().length()-6).replace("\\",".");
 			configMap(className);
@@ -72,7 +82,7 @@ public class WebAppListener implements ServletContextListener {
 					if(file.getName().endsWith("annotation")||file.getName().endsWith("framework")){
 						continue;
 					}
-					scanPath(file.getPath(),urlPath);
+					scanPath(file,bFile);
 				}
 			}
 		}
