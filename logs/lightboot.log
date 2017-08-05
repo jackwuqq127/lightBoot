@@ -1,0 +1,2 @@
+[INFO ] 2017-08-05 20:49:50,150(0) --> [qtp1985363238-19] com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:854): {dataSource-1} inited  
+[DEBUG] 2017-08-05 20:49:50,219(69) --> [qtp1985363238-19] com.alibaba.druid.pool.PreparedStatementPool.put(PreparedStatementPool.java:129): {conn-10001, pstmt-20000} enter cache  
