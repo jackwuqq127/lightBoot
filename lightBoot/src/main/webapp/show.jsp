@@ -12,6 +12,7 @@
 
 <%
 	List<Map<String, Object>> list=(List<Map<String, Object>>)request.getAttribute("list");
+	application.setAttribute("test","contextTest");
 %>
 
 <body>

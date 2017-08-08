@@ -23,10 +23,18 @@ public class WebAppListener implements ServletContextListener {
 	private Properties appPro=null;
 	
 	@Override
-	public void contextDestroyed(ServletContextEvent arg0) {}
+	public void contextDestroyed(ServletContextEvent arg0) {
+		System.out.println("contextDestroyed");
+	}
 
 	@Override
 	public void contextInitialized(ServletContextEvent app) {
+		urlMappingConfig();
+	}
+	
+	
+	//分析、处理 url-方法、对象 键值对
+	private void urlMappingConfig(){
 		appPro=ConfigureProperties.properties;
 		String scanPackageConfig=appPro.getProperty("basePackage");
 		
@@ -53,12 +61,6 @@ public class WebAppListener implements ServletContextListener {
 			File baseFile=getBasePath(f);
 			scanPath(f,baseFile);
 		}
-		
-		/*StringBuffer sb=new StringBuffer("已经扫描到的url: \n");
-		for(String key:ConfigureProperties.servletMap.keySet()){
-			sb.append(key+"\n");
-		}
-		log.info(sb);*/
 	}
 	
 	//得到基础路径
@@ -88,6 +90,7 @@ public class WebAppListener implements ServletContextListener {
 		}
 	}
 	
+	// 扫描方法反射，获取注解
 	private void configMap(String className){
 		try {
 			Class<?> c = Class.forName(className);
@@ -121,6 +124,7 @@ public class WebAppListener implements ServletContextListener {
 		} 
 	}
 	
+	//写入配置，放入map 集合
 	private void setUrlMapping(Method method,Object obj,String c_url,String m_url){
 		Object[] array=new Object[2];
 		array[0]=method;
