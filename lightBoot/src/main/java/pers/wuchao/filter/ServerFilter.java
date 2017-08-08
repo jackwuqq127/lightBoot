@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import pers.wuchao.action.framework.ConfigureProperties;
+import pers.wuchao.listener.WebAppListener;
 
 @WebFilter(urlPatterns={"*"})
 public class ServerFilter implements Filter {
@@ -27,6 +28,8 @@ public class ServerFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 		servletMap=ConfigureProperties.servletMap;
 		appPros=ConfigureProperties.properties;
+		/*WebAppListener wl=new WebAppListener();
+		wl.urlMappingConfig();*/
 	}
 	
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

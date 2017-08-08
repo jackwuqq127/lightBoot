@@ -6,7 +6,6 @@ import java.util.Date;
 
 import pers.wuchao.daobase.JedisUtil;
 import pers.wuchao.tools.DateUtil;
-import redis.clients.jedis.Jedis;
 
 public class RedisTest {
 	public static void main(String[] args) {

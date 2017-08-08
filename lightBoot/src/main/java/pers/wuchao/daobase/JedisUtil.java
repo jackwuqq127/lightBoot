@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import pers.wuchao.action.framework.ConfigureProperties;
 import pers.wuchao.tools.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -14,7 +15,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public class JedisUtil {
 		private static Logger log=Logger.getLogger(JedisUtil.class);
 	  
-	    static  Properties info=new Properties();
+	    private static  Properties info=new Properties();
 	    
 	    //Redis服务器IP  
 	    private static String ADDR_ARRAY = null;  
@@ -36,9 +37,8 @@ public class JedisUtil {
 	  
 	    
 	    private static boolean setValueFromProperties(){
-	    	InputStream in= JedisUtil.class.getClassLoader().getResourceAsStream("redis.properties");
 	    	try {
-				info.load(in);
+				info.putAll(ConfigureProperties.properties); // 从ConfigureProperties 中加载配置文件
 				ADDR_ARRAY=info.getProperty("addr_array");
 				PORT=Integer.parseInt(info.getProperty("port"));
 				AUTH=info.getProperty("auth");

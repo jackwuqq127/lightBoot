@@ -1,6 +1,5 @@
 package pers.wuchao.datasource;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +12,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
+
+import pers.wuchao.action.framework.ConfigureProperties;
 
 
 
@@ -28,9 +29,8 @@ public class DBHelper {
 	protected static QueryRunner queryRunner;
 	
 	static{
-		InputStream in=DBHelper.class.getClassLoader().getResourceAsStream("app.properties");
 		try {
-			info.load(in);
+			info.putAll(ConfigureProperties.properties);
 			dataSource=DruidDataSourceFactory.createDataSource(info);
 			queryRunner=new QueryRunner(dataSource);
 		} catch (Exception e) {

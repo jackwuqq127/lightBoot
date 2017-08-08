@@ -34,7 +34,7 @@ public class WebAppListener implements ServletContextListener {
 	
 	
 	//分析、处理 url-方法、对象 键值对
-	private void urlMappingConfig(){
+	public void urlMappingConfig(){
 		appPro=ConfigureProperties.properties;
 		String scanPackageConfig=appPro.getProperty("basePackage");
 		
