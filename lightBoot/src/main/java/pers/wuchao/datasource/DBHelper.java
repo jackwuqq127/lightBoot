@@ -25,7 +25,7 @@ public class DBHelper {
 	protected PreparedStatement ps=null;
 	protected ResultSet rs=null;
 	
-	protected static DataSource dataSource;
+	public static DataSource dataSource;
 	protected static QueryRunner queryRunner;
 	
 	static{

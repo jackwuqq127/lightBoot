@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import pers.wuchao.action.framework.ConfigureProperties;
-import pers.wuchao.listener.WebAppListener;
+//import pers.wuchao.listener.WebAppListener;
 
 @WebFilter(urlPatterns={"*"})
 public class ServerFilter implements Filter {

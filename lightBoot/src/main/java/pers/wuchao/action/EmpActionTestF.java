@@ -20,10 +20,6 @@ public class EmpActionTestF extends FrameAction {
 	protected String show(HttpServletRequest req, HttpServletResponse resp) throws InterruptedException {
 		String sql="select * from emp";
 		List<Map<String, Object>> list=daoTool.queryForList(sql);
-		for (Map<String, Object> map : list) {
-			log.debug(map);
-		}
-		
 		req.setAttribute("list", list);
 		return "show.jsp";
 	}

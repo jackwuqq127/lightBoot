@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
@@ -15,12 +16,16 @@ import org.apache.log4j.Logger;
 import pers.wuchao.action.annotation.Action;
 import pers.wuchao.action.annotation.ActionlMapping;
 import pers.wuchao.action.framework.ConfigureProperties;
+import pers.wuchao.daobase.DaoTool;
+import pers.wuchao.daobase.JedisUtil;
+import pers.wuchao.datasource.DBHelper;
 
 @WebListener
 public class WebAppListener implements ServletContextListener {
 	
 	private Logger log=Logger.getLogger(WebAppListener.class);
 	private Properties appPro=null;
+	private DaoTool dao=new DaoTool();
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
@@ -29,7 +34,13 @@ public class WebAppListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent app) {
-		urlMappingConfig();
+		try {
+			urlMappingConfig();
+			DBHelper.dataSource.getConnection();
+			JedisUtil.getJedis();
+		} catch (Exception e) {
+			log.error(e, e.fillInStackTrace());
+		}
 	}
 	
 	

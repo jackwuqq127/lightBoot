@@ -1,6 +1,5 @@
 package pers.wuchao.daobase;
 
-import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -89,7 +88,7 @@ public class JedisUtil {
 	                config.setTestOnBorrow(TEST_ON_BORROW);  
 	                jedisPool = new JedisPool(config, ADDR_ARRAY.split(",")[1], PORT, TIMEOUT, AUTH);  
 	            } catch (Exception e2) {  
-	            	log.error("Second create JedisPool error : " + e2);  
+	            	log.error(e2,e2.fillInStackTrace());  
 	            }  
 	        }  
 	    }
@@ -100,6 +99,7 @@ public class JedisUtil {
 	     * 在多线程环境同步初始化 
 	     */  
 	    private static synchronized void poolInit() {  
+	    	log.info("redis 初始化！");
 	        if (jedisPool == null) {    
 	            initialPool();  
 	        }  
@@ -116,13 +116,13 @@ public class JedisUtil {
 	        }  
 	        Jedis jedis = null;  
 	        try {    
-	            if (jedisPool != null) {    
+	            if (jedisPool != null) {
 	                jedis = jedisPool.getResource();   
 	            }  
 	        } catch (Exception e) {    
-	        	log.error("Get jedis error : "+e);  
+	        	log.error(e,e.fillInStackTrace());  
 	        }finally{  
-	            returnResource(jedis);  
+	           jedis.close();
 	        }  
 	        return jedis;  
 	    }    
