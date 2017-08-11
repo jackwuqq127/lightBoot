@@ -36,7 +36,7 @@ public class WebAppListener implements ServletContextListener {
 			DBHelper.dataSource.getConnection();
 			JedisUtil.initialPool();
 		} catch (Exception e) {
-			log.error(e, e.fillInStackTrace());
+			log.info("druid 数据源初始化失败！请检查相关配置！");
 		}
 	}
 	

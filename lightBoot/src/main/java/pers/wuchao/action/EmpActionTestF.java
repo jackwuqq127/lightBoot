@@ -14,6 +14,7 @@ import pers.wuchao.action.framework.FrameAction;
 
 @Action
 public class EmpActionTestF extends FrameAction {
+	@SuppressWarnings("unused")
 	private Logger log=Logger.getLogger(this.getClass());
 	
 	@ActionlMapping(urlPatterns={"/emplist"})
