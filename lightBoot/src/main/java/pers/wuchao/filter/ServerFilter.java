@@ -1,68 +1,78 @@
 package pers.wuchao.filter;
-
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Properties;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import pers.wuchao.action.framework.ConfigureProperties;
-//import pers.wuchao.listener.WebAppListener;
+import org.apache.log4j.Logger;
+
+import pers.wuchao.action.framework.Dispatcher;
+import pers.wuchao.action.framework.JsonString;
+import pers.wuchao.action.framework.Redirect;
+import pers.wuchao.filter.frame.FrameFilter;
 
 @WebFilter(urlPatterns={"*"})
-public class ServerFilter implements Filter {
+public class ServerFilter extends FrameFilter {
+	private Logger log=Logger.getLogger(ServerFilter.class);
 	
-	private Map<String, Object[]> servletMap=null;
-	private Properties appPros=null;
-	
-	public void init(FilterConfig filterConfig) throws ServletException {
-		servletMap=ConfigureProperties.servletMap;
-		appPros=ConfigureProperties.properties;
-		/*WebAppListener wl=new WebAppListener();
-		wl.urlMappingConfig();*/
-	}
-	
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		HttpServletRequest req=(HttpServletRequest)request;
-		HttpServletResponse resp=(HttpServletResponse)response;
-		
+	@Override
+	public void service() throws IOException, ServletException {
 		setCharEncode(req, resp);
-		String path=service(req, resp);
+		Object obj=excute(req, resp);
+		String path;
 		
-		if(path==null||path.equals("chain")||path.length()==0){
-			chain.doFilter(request, response);
-			return;
-		}else{
+		if(obj instanceof Boolean ){
+			boolean f=(boolean) obj;
+			if(f){
+				chain.doFilter(req, resp);
+			}
+		}else if(obj instanceof Dispatcher ){
+			Dispatcher d=(Dispatcher) obj;
+			path=d.getPath();
 			req.getRequestDispatcher("/"+path).forward(req, resp);
+		}else if(obj instanceof Redirect){
+			Redirect r=(Redirect) obj;
+			path=r.getPaht();
+			String contextPath = req.getContextPath();
+			resp.sendRedirect(contextPath+"/"+path);
+		}else if(obj instanceof JsonString){
+			JsonString jsonString=(JsonString) obj;
+			PrintWriter printWriter = resp.getWriter();
+			printWriter.print(jsonString.getStr());
 		}
 	}
 	
-	private String service(HttpServletRequest req,HttpServletResponse resp){
+	private Object excute(HttpServletRequest req,HttpServletResponse resp){
 		String servPath = req.getServletPath(); //得到请求servlet 地址
 		Object[] array=servletMap.get(servPath); //根据地址获取servlet 相关参数
 		if(array==null||array.length==0){
-			return "chain";
+			return true;
 		}
 		
 		try {
 			Method method=(Method)array[0]; //获得方法
 			Object obj=array[1]; //获得对象
+			
+			//赋值req
+			setSupperField("req", obj, req);
+			
+			//赋值resp
+			setSupperField("resp", obj, resp);
+			
+			//赋值session
+			setSupperField("session", obj, req.getSession());
+			
 			method.setAccessible(true);
-			Object path= method.invoke(obj, req,resp);
-			return path.toString();
+			Object getObj= method.invoke(obj); //执行action
+			return getObj;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e, e.fillInStackTrace());
 		}
 		return null;
 	}
@@ -77,5 +87,9 @@ public class ServerFilter implements Filter {
 		resp.setCharacterEncoding(encode);
 	}
 	
-	public void destroy() {}
+	private void setSupperField(String name,Object obj,Object value) throws Exception{
+		Field reqField=obj.getClass().getSuperclass().getDeclaredField(name);
+		reqField.setAccessible(true);
+		reqField.set(obj, value);
+	}
 }
